@@ -1,16 +1,58 @@
 
 require('dotenv').config()
+const mongoose = require('mongoose')
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 
 const notesRouter = require('./routes/notes')
 const personsRouter = require('./routes/persons')
+const Note = require('./models/note')
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
+
+
+// MONGO
+// MONGO
+// MONGO
+
+
+
+
+const mongoUrl = process.env.MONGODB_URI
+console.log(mongoUrl)
+mongoose
+  .connect(mongoUrl, { family: 4 })
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.error('error connecting to MongoDB:', error.message)
+  })
+
+
+
+// MONGO
+// MONGO
+// MONGO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 morgan.token('body', (req) => (req.method === 'POST' ? JSON.stringify(req.body) : ''))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -43,3 +85,16 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.name, error.message)
+
+  if (error.name === 'CastError') {
+    return res.status(400).json({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)

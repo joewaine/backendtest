@@ -1,4 +1,6 @@
-const router = require('express').Router()
+const notesRouter = require('express').Router()
+const Note = require('../models/note')
+
 
 let notes = [
   { id: "1", content: "HTML is easy", important: true },
@@ -7,34 +9,68 @@ let notes = [
 ]
 
 // GET all
-router.get('/', (req, res) => {
-  res.json(notes)
-})
+notesRouter.get('/', async (req, res, next) => {
+  try {
+    const note = await Note.find({})
 
-// GET one
-router.get('/:id', (req, res) => {
-  const id = req.params.id
-  const note = notes.find(n => n.id === id)
+    if (!note) {
+      return res.status(404).json({ error: 'note not found' })
+    }
 
-  if (!note) {
-    return res.status(404).send(`<h1>${id} not found</h1>`)
+    res.json(note)
+  } catch (error) {
+    next(error) // handles invalid ObjectId
   }
-
-  return res.json(note)
 })
+
+
+
+
+notesRouter.get('/:id', async (req, res, next) => {
+  try {
+    const note = await Note.findById(req.params.id)
+
+    if (!note) {
+      return res.status(404).json({ error: 'note not found' })
+    }
+
+    res.json(note)
+  } catch (error) {
+    next(error) // handles invalid ObjectId
+  }
+})
+
+
+
+
 
 // DELETE one
-router.delete('/:id', (req, res) => {
-  const id = req.params.id
-  notes = notes.filter(n => n.id !== id)
-  res.status(204).end()
+// notesRouter.delete('/:id', (req, res) => {
+//   const id = req.params.id
+//   notes = notes.filter(n => n.id !== id)
+//   res.status(204).end()
+// })
+
+
+notesRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const deletedNote = await Note.findByIdAndDelete(req.params.id)
+
+    if (!deletedNote) {
+      return res.status(404).json({ error: 'note not found' })
+    }
+
+    return res.status(204).end()
+  } catch (error) {
+    next(error) // handles invalid ObjectId
+  }
 })
 
 
 
 //POST
 // POST create
-router.post('/post/', (req, res) => {
+notesRouter.post('/post/', (req, res) => {
   const { content } = req.body
 
 
@@ -49,4 +85,4 @@ router.post('/post/', (req, res) => {
 })
 
 
-module.exports = router
+module.exports = notesRouter

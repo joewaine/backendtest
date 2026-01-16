@@ -1,1 +1,1 @@
-DELETE http://localhost:3001/persons/delete/4
+DELETE http://localhost:3001/notes/696a7a468b714f4b055d46d0
