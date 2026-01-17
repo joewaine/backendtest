@@ -70,18 +70,28 @@ notesRouter.delete('/:id', async (req, res, next) => {
 
 //POST
 // POST create
-notesRouter.post('/post/', (req, res) => {
-  const { content } = req.body
 
 
-  const newNote = {
-    id: String(Math.floor(Math.random() * 1_000_000)),
-    content: content,
-    important: Boolean(Math.floor(Math.random() * 2))
+
+notesRouter.post("/", async (request, response, next) => {
+  try {
+    const { content } = request.body
+
+    if (!content || content.trim() === "") {
+      return response.status(400).json({ error: "content is required" })
+    }
+
+    const note = new Note({
+      content: content.trim(),
+      important: Boolean(Math.floor(Math.random() * 2))
+
+    })
+
+    const savedNote = await note.save()
+    response.status(201).json(savedNote)
+  } catch (error) {
+    next(error)
   }
-
-  notes = notes.concat(newNote)
-  return res.status(201).json(newNote)
 })
 
 
