@@ -1,13 +1,6 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
-
-let notes = [
-  { id: "1", content: "HTML is easy", important: true },
-  { id: "2", content: "Browser can execute only JavaScript", important: false },
-  { id: "3", content: "GET and POST are the most important methods of HTTP protocol", important: true }
-]
-
 // GET all
 notesRouter.get('/', async (req, res, next) => {
   try {
@@ -22,10 +15,7 @@ notesRouter.get('/', async (req, res, next) => {
     next(error) // handles invalid ObjectId
   }
 })
-
-
-
-
+// GET one
 notesRouter.get('/:id', async (req, res, next) => {
   try {
     const note = await Note.findById(req.params.id)
@@ -40,17 +30,7 @@ notesRouter.get('/:id', async (req, res, next) => {
   }
 })
 
-
-
-
-
 // DELETE one
-// notesRouter.delete('/:id', (req, res) => {
-//   const id = req.params.id
-//   notes = notes.filter(n => n.id !== id)
-//   res.status(204).end()
-// })
-
 
 notesRouter.delete('/:id', async (req, res, next) => {
   try {
@@ -66,12 +46,7 @@ notesRouter.delete('/:id', async (req, res, next) => {
   }
 })
 
-
-
-//POST
 // POST create
-
-
 
 notesRouter.post("/", async (request, response, next) => {
   try {
@@ -92,6 +67,27 @@ notesRouter.post("/", async (request, response, next) => {
   } catch (error) {
     next(error)
   }
+})
+
+
+// update create
+notesRouter.put('/:id', (request, response, next) => {
+  const { content, important } = request.body
+
+  Note.findById(request.params.id)
+    .then(note => {
+      if (!note) {
+        return response.status(404).end()
+      }
+
+      note.content = content
+      note.important = important
+
+      return note.save().then((updatedNote) => {
+        response.json(updatedNote)
+      })
+    })
+    .catch(error => next(error))
 })
 
 
