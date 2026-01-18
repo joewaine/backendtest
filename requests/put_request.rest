@@ -1,6 +1,6 @@
-curl -X PUT "https://backendtest-hxzm.onrender.com/notes/696a8313df3e1fe7dd462d39" \
+curl -X PUT "http://localhost:3001/notes/696a8313df3e1fe7dd462d39" \
   -H "Content-Type: application/json" \
   -d '{
-    "content": "Updated content from cURL",
+    "content": "koji wake me up tomorrow",
     "important": false
   }'

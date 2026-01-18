@@ -72,8 +72,9 @@ notesRouter.post("/", async (request, response, next) => {
 
 // update create
 notesRouter.put('/:id', (request, response, next) => {
+  console.log('getting here');
   const { content, important } = request.body
-
+console.log('Note.findById(request.params.id)', request.params.id);
   Note.findById(request.params.id)
     .then(note => {
       if (!note) {
